@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import { CSSTransition } from "react-transition-group";
 import { useDispatch, useSelector } from "react-redux";
-import { memberCoice } from "../../redux/modules/homeRedux/artistBtn";
+import { memberCoice } from "../../redux/modules/artistBtn";
 
 function ArtistBtn() {
   const dispatch = useDispatch()

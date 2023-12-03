@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { StWrap, StContainer } from "../styed/commonStyle";
@@ -7,7 +7,8 @@ import FanLetterInsertBox from "../components/home/FanLetterInsertBox";
 import FanLetterListBox from "../components/home/FanLetterListBox";
 import SeatchWrap from "../components/home/SeatchWrap";
 import { useDispatch, useSelector } from "react-redux";
-import { urlParamsArtist, } from "../redux/modules/homeRedux/insertFanLetter";
+import { urlParamsArtist, __getFanLetter } from "../redux/modules/fanLetter";
+import { __getUser } from "../redux/modules/auth";
 
 function Home() {
   const artistBtn = useSelector((state) => state.artistBtn);
@@ -15,7 +16,6 @@ function Home() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const nickNameRef = useRef("");
 
   // component mount시 true인 맴버담기
   useEffect(() => {
@@ -29,6 +29,13 @@ function Home() {
     dispatch(urlParamsArtist(searchParams.get("artistSort")));
   }, [artistBtn.artistMember]);
 
+  useEffect(() => {
+    if (localStorage.getItem("user") === null) {
+      navigate("/login");
+    } else {
+      dispatch(__getFanLetter());
+    }
+  }, []);
 
   return (
     <StWrap>
@@ -37,7 +44,7 @@ function Home() {
         <ArtistBtn />
         <ContentWrap>
           {/* 펜레터 추가 영역 */}
-          <FanLetterInsertBox nickNameRef={nickNameRef} />
+          <FanLetterInsertBox />
           <SeatchAndListWrap>
             {/* Seatch영역 */}
             <SeatchWrap />

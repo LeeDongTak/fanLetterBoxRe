@@ -3,38 +3,39 @@ import styled from "styled-components";
 import { faHouseChimney } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  insertCommit,
-  dataUpdate,
-} from "../../redux/modules/homeRedux/insertFanLetter";
+  __addFanLetter,
+  __updateFanLetter,
+  __deleteFanLetter,
+} from "../../redux/modules/fanLetter";
 import {
   searchMsgCheck,
   searchReset,
-} from "../../redux/modules/homeRedux/searchFanLetter";
+} from "../../redux/modules/searchFanLetter";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import {
-  updInputShow,
-  modalShow,
-  updCommit,
-  delCommit,
-} from "../../redux/modules/detailRedux/detail";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { updInputShow, modalShow } from "../../redux/modules/modal";
 
-function Button({ Sortation }) {
-  const insertFanLetter = useSelector((state) => state.insertFanLetter);
+function Button({ Sortation, contentInput, setContentinput }) {
+  const fanLetter = useSelector((state) => state.fanLetter);
+  const modal = useSelector((state) => state.modal);
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { id } = useParams();
-  const fanLetterData = [...insertFanLetter.fanLetterData];
-  const resultData = fanLetterData.find((x) => x.id === id);
   const navigate = useNavigate();
+
   switch (Sortation) {
     case "팬레터 등록":
       return (
         <StButton
           $btnStyle="addBtn"
           onClick={() => {
-            dispatch(insertCommit());
             dispatch(searchMsgCheck());
+            dispatch(
+              __addFanLetter({
+                searchParams: searchParams.get("artistSort"),
+                contentInput,
+              })
+            );
+            setContentinput('')
           }}
         >
           팬레터 등록
@@ -57,9 +58,7 @@ function Button({ Sortation }) {
         <StButton
           onClick={() => {
             dispatch(
-              modalShow({
-                modalMsg: "정말로 삭제하시겠습니까?",
-              })
+              modalShow({ modalMsg: "정말로 삭제하시겠습니까?", updBtn: false })
             );
           }}
         >
@@ -71,11 +70,18 @@ function Button({ Sortation }) {
       return (
         <StButton
           onClick={() => {
-            dispatch(
-              modalShow({
-                modalMsg: "정말로 수정하시겠습니까?",
-              })
-            );
+            if (fanLetter.detailData.content === fanLetter.updContentInput) {
+              dispatch(
+                modalShow({ modalMsg: "수정한 내용이 없습니다.", updBtn: true })
+              );
+            } else {
+              dispatch(
+                modalShow({
+                  modalMsg: "정말로 수정하시겠습니까?",
+                  updBtn: false,
+                })
+              );
+            }
           }}
         >
           수정완료
@@ -99,13 +105,12 @@ function Button({ Sortation }) {
           $btnStyle="cmitBtn"
           onClick={() => {
             dispatch(
-              updCommit({
-                navigate,
-                artist: insertFanLetter.searchParamsArtist,
-                id: resultData.id,
+              __updateFanLetter({
+                id: fanLetter.detailData.id,
+                updContentInput: fanLetter.updContentInput,
               })
             );
-            dispatch(dataUpdate());
+            dispatch(modalShow({ modalMsg: "", updBtn: false }));
           }}
         >
           확인
@@ -117,14 +122,9 @@ function Button({ Sortation }) {
         <StButton
           $btnStyle="cmitBtn"
           onClick={() => {
-            dispatch(
-              delCommit({
-                navigate,
-                artist: insertFanLetter.searchParamsArtist,
-                id: resultData.id,
-              })
-            );
-            dispatch(dataUpdate());
+            dispatch(__deleteFanLetter(fanLetter.detailData.id));
+            dispatch(modalShow({ modalMsg: "", updBtn: false }));
+            navigate("/");
           }}
         >
           확인
@@ -136,10 +136,10 @@ function Button({ Sortation }) {
         <StButton
           $btnStyle="cmitBtn"
           onClick={() => {
-            dispatch(modalShow({ modalMsg: "", modalBool: false }));
+            dispatch(modalShow({ modalMsg: "", updBtn: false }));
           }}
         >
-          취소
+          {modal.updBtn === true ? "확인" : "취소"}
         </StButton>
       );
       break;
@@ -148,7 +148,7 @@ function Button({ Sortation }) {
         <StButton
           $btnStyle="homeBtn"
           onClick={() => {
-            navigate(`/?artisdtSort=${insertFanLetter.searchParamsArtist}`);
+            navigate("/");
           }}
         >
           <FontAwesomeIcon icon={faHouseChimney} />
@@ -160,12 +160,8 @@ function Button({ Sortation }) {
         <StButton
           $btnStyle="searchBtn"
           onClick={() => {
-            dispatch(
-              searchReset({
-                navigate,
-                artistParams: searchParams.get("artistSort"),
-              })
-            );
+            navigate(`/?artistSort=${searchParams.get("artistSort")}`);
+            dispatch(searchReset());
           }}
         >
           초가화

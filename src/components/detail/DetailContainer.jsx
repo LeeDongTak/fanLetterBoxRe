@@ -1,30 +1,25 @@
-import React, { useContext } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
-import { updInput } from "../../redux/modules/detailRedux/detail";
+import { __getFanLetter,updInput } from "../../redux/modules/fanLetter";
 
 function DetailContainer() {
-  const insertFanLetter = useSelector((state) => state.insertFanLetter);
-  const detail = useSelector((state) => state.detail);
-  const { id } = useParams();
-  const fanLetterData = [...insertFanLetter.fanLetterData];
-  const resultData = fanLetterData.find((x) => x.id === id);
+  const fanLetter = useSelector((state) => state.fanLetter);
+  const modal = useSelector((state) => state.modal);
   const dispatch = useDispatch();
   
-
   const updContentInputHeadler = (e) => {
-    dispatch(updInput(e.target.value))
-  }
+    dispatch(updInput(`${e.target.value}`));
+  };
   return (
     <Container>
-      <ArtistName>{resultData.writedTo} 팬레터 함</ArtistName>
-      {detail.updContentShow === false ? (
-        <FanLetter>{resultData.content}</FanLetter>
+      <ArtistName>{fanLetter.detailData.writedTo} 팬레터 함</ArtistName>
+      {modal.updContentShow === false ? (
+        <FanLetter>{fanLetter.detailData.content}</FanLetter>
       ) : (
         <UpdFanLetter
           onChange={updContentInputHeadler}
-          value={detail.updContentInput}
+          value={fanLetter.updContentInput}
           cols="30"
           rows="10"
         ></UpdFanLetter>

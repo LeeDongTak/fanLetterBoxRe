@@ -1,65 +1,70 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import Button from "../commom/Button";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { insertCommit } from "../../redux/modules/homeRedux/insertFanLetter";
-import { searchMsgCheck } from "../../redux/modules/homeRedux/searchFanLetter";
-import {
-  nicknameChage,
-  contentChage,
-} from "../../redux/modules/homeRedux/insertFanLetter";
+import { __addFanLetter } from "../../redux/modules/fanLetter";
+import { searchMsgCheck } from "../../redux/modules/searchFanLetter";
+import { useSearchParams } from "react-router-dom";
 
-function FanLetterInsertBox({ nickNameRef }) {
-  const insertFanLetter = useSelector((state) => state.insertFanLetter);
+function FanLetterInsertBox() {
+  const [nickName, setNickName] = useState("");
+  const [contentInput, setContentinput] = useState("");
+  const contentRef = useRef(null);
+  const fanLetter = useSelector((state) => state.fanLetter);
   const searchFanLetter = useSelector((state) => state.searchFanLetter);
   const dispatch = useDispatch();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const nickNameinputChage = (e) => {
-    dispatch(nicknameChage(e.target.value));
-  };
   const contentinputChage = (e) => {
-    dispatch(contentChage(e.target.value));
+    setContentinput(e.target.value);
   };
+
+  useEffect(() => {
+    contentRef.current.focus();
+    if (localStorage.getItem("user") !== null) {
+      const user = JSON.parse(localStorage.getItem("user"));
+      setNickName(user.nickname);
+    }
+  }, []);
 
   return (
     <InputBox>
       <TitleBox>
-        {insertFanLetter.searchParamsArtist}
+        {fanLetter.searchParamsArtist}
         에게 팬레터 보내기
       </TitleBox>
-      {insertFanLetter.errMsgBool === true ? (
-        <ErrMsg>{insertFanLetter.errMsg}</ErrMsg>
+      {fanLetter.errMsgBool === true ? (
+        <ErrMsg>{fanLetter.errMsg}</ErrMsg>
       ) : null}
       {searchFanLetter.searchErrBool === true ? (
         <ErrMsg>{searchFanLetter.searchErrMsg}</ErrMsg>
       ) : null}
-      <ListInsertNickName
-        value={insertFanLetter.nickNameInput}
-        placeholder="닉네임을 입력하세요"
-        type="text"
-        onChange={nickNameinputChage}
-        ref={nickNameRef}
-        onKeyUp={(e) => {
-          if (e.key === "Enter") {
-            dispatch(insertCommit());
-            dispatch(searchMsgCheck());
-          }
-        }}
-      />
+      <ListInsertNickName>{nickName}</ListInsertNickName>
       <ListInsertContent
-        value={insertFanLetter.contentInput}
+        value={contentInput}
         placeholder="내용을 입력하세요"
         onChange={contentinputChage}
         cols="30"
         rows="5"
+        ref={contentRef}
         onKeyUp={(e) => {
           if (e.key === "Enter") {
-            dispatch(insertCommit());
             dispatch(searchMsgCheck());
+            dispatch(
+              __addFanLetter({
+                searchParams: searchParams.get("artistSort"),
+                contentInput,
+              })
+            );
+            setContentinput("");
           }
         }}
       ></ListInsertContent>
-      <Button Sortation="팬레터 등록" />
+      <Button
+        Sortation="팬레터 등록"
+        contentInput={contentInput}
+        setContentinput={setContentinput}
+      />
     </InputBox>
   );
 }
@@ -88,13 +93,12 @@ const TitleBox = styled.div`
   text-shadow: 0 0 5px #fff;
 `;
 
-const ListInsertNickName = styled.input`
+const ListInsertNickName = styled.div`
   width: 80%;
   margin-top: 10%;
   padding: 2%;
   border: 0;
   border-radius: 5px;
-  background: rgba(255, 255, 255, 0.7);
   font-size: 1.3rem;
   transition: 0.2s;
   &:focus {
@@ -110,9 +114,10 @@ const ListInsertContent = styled.textarea`
   padding: 2%;
   font-size: 1.3rem;
   border-radius: 5px;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.8);
   transition: 0.2s;
   &:focus {
+    background: rgba(255, 255, 255, 1);
     outline: none;
     box-shadow: 0 0 5px 2px #fff;
   }

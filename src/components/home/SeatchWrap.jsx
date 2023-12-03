@@ -1,35 +1,31 @@
 import React, { useContext, useState } from "react";
 import styled from "styled-components";
 import Button from "../commom/Button";
-import { searchChage } from "../../redux/modules/homeRedux/searchFanLetter";
 import { useDispatch, useSelector } from "react-redux";
-import { searchCommit } from "../../redux/modules/homeRedux/searchFanLetter";
-import { insertMsgCheck } from "../../redux/modules/homeRedux/insertFanLetter";
+import { searchCommit, searchChage } from "../../redux/modules/searchFanLetter";
+import { insertMsgCheck } from "../../redux/modules/fanLetter";
 import { useNavigate } from "react-router-dom";
 
 function SeatchWrap() {
-  const insertFanLetter = useSelector((state) => state.insertFanLetter);
+  const fanLetter = useSelector((state) => state.fanLetter);
   const searchFanLetter = useSelector((state) => state.searchFanLetter);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const searchinputChage = (e) => {
     dispatch(searchChage(e.target.value));
   };
 
   return (
     <SearchBox>
-      <SearchName>{insertFanLetter.searchParamsArtist}</SearchName>
+      <SearchName>{fanLetter.searchParamsArtist}</SearchName>
       <SeatchInput
         placeholder="펜레터를 검색하세요"
-        value={searchFanLetter.SeatchInput}
+        value={searchFanLetter.searchInput}
         type="text"
         onChange={searchinputChage}
         onKeyUp={(e) => {
-          if (e.key === "Enter") {
             dispatch(searchCommit());
             dispatch(insertMsgCheck());
-          }
         }}
       />
       <Button Sortation="검색초기화" />
@@ -67,6 +63,7 @@ const SeatchInput = styled.input`
   border: 0;
   font-size: 1.3rem;
   &:focus {
+  background-color: rgba(255, 255, 255, 1);
     outline: none;
     border: 1px solid #fff;
   }

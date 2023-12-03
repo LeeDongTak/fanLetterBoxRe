@@ -1,36 +1,35 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import FanLetter from "./FanLetter";
-import { useSelector } from "react-redux";
-import { useSearchParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { __getFanLetter } from "../../redux/modules/fanLetter";
 
 function FanLetterListBox() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const fanLetter = useSelector((state) => state.fanLetter);
-  const searchFanLetter = useSelector((state) => state.searchFanLetter);
+  const auth = useSelector((state) => state.auth);
   const [searchParams, setSearchParams] = useSearchParams();
-  const searchParamsartistSort = searchParams.get("artistSort")
+  const searchParamsartistSort = searchParams.get("artistSort");
   const fanLetterMsg = fanLetter.fanLetterData.filter(
     (item) => item.writedTo === searchParamsartistSort
   );
+
+  useEffect(() => {
+    dispatch(__getFanLetter());
+  }, []);
   return (
     <ListBox>
       {fanLetter.fanLetterData
+        .filter((item) => item.userId === auth.user.id)
         .filter((item) => item.writedTo === searchParamsartistSort)
-        .filter((item) =>
-          searchFanLetter.searchInput !== null
-            ? item.nickname.includes(searchFanLetter.searchInput) ||
-              item.content.includes(searchFanLetter.searchInput) ||
-              item.createdAt.includes(searchFanLetter.searchInput)
-            : item
-        )
         .map((item) => (
           <FanLetter key={item.id} fanLetterData={item} />
         ))}
 
       {fanLetterMsg.length === 0 ? (
-        <StMsg>
-          {searchParamsartistSort}에게 첫번째 팬레터를 보내주세요
-        </StMsg>
+        <StMsg>{searchParamsartistSort}에게 첫번째 팬레터를 보내주세요</StMsg>
       ) : null}
     </ListBox>
   );
@@ -40,7 +39,7 @@ export default FanLetterListBox;
 
 const ListBox = styled.ul`
   width: 100%;
-  height: 100%;
+  height: 90%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;

@@ -13,11 +13,7 @@ function FanLetter({ fanLetterData }) {
         navigate(`/detail/${fanLetterData.id}`);
       }}
     >
-      <ImgBox>
-        <Img src={fanLetterData.avatar} alt="" />
-      </ImgBox>
       <ContentBox>
-        <TextContent>{fanLetterData.nickname}</TextContent>
         <TextContent>{fanLetterData.content}</TextContent>
         <TextContent>{fanLetterData.createdAt}</TextContent>
       </ContentBox>
@@ -43,21 +39,8 @@ const ListElement = styled.li`
   }
 `;
 
-const ImgBox = styled.div`
-  width: 20%;
-  height: 120px;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-`;
-
-const Img = styled.img`
-  width: 70%;
-  border-radius: 50%;
-`;
-
 const ContentBox = styled.div`
-  width: 80%;
+  width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -70,7 +53,7 @@ const TextContent = styled.p`
   font-size: 0.9rem;
   font-weight: bold;
   width: 100%;
-  &:nth-child(2) {
+  &:nth-child(1) {
     padding: 3%;
     background-color: rgba(255, 255, 255, 0.5);
     border-radius: 5px;
@@ -78,7 +61,7 @@ const TextContent = styled.p`
     white-space: nowrap;
     text-overflow: ellipsis;
   }
-  &:nth-child(3) {
+  &:nth-child(2) {
     font-size: 0.8rem;
     width: 100%;
     display: flex;

@@ -1,31 +1,46 @@
-import React, { useContext, useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import styled from "styled-components";
-import Button from "../commom/Button";
 import { useDispatch, useSelector } from "react-redux";
-import { modalShow } from "../../redux/modules/modal";
+import { modalClose } from "../../redux/modules/auth";
+import { useNavigate } from "react-router-dom";
 
-function Modal() {
-  const modal = useSelector((state) => state.modal);
+function Modal({ setSignUpToggle }) {
+  const auth = useSelector((state) => state.auth);
+  const BtnRef = useRef(null);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    BtnRef.current.focus();
+  });
   return (
     <ModalWrap>
       <ModalBg
         onClick={() => {
-          dispatch(modalShow({ modalMsg: "", modalBool: false }));
+          dispatch(modalClose());
         }}
       ></ModalBg>
       <ModalBox>
-        <ModalText>{modal.ModalText}</ModalText>
+        <ModalText>
+          {auth.isError === true ? auth.error : auth.successMessage}
+        </ModalText>
 
         <ModalBtnBox>
-          {modal.updBtn === false ? (
-            modal.ModalText === "정말로 수정하시겠습니까?" ? (
-              <Button Sortation="수정확인" />
-            ) : (
-              <Button Sortation="삭제확인" />
-            )
-          ) : null}
-          <Button Sortation="모달취소" />
+          <StButton
+            onClick={() => {
+              dispatch(modalClose());
+            }}
+            onkeyUp={(e) => {
+              if (e.key === "Enter") {
+                dispatch(modalClose());
+              }
+            }}
+            ref={BtnRef}
+          >
+            확인
+          </StButton>
+          }
+          
         </ModalBtnBox>
       </ModalBox>
     </ModalWrap>
@@ -40,7 +55,7 @@ const ModalWrap = styled.div`
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 100;
+  z-index: 103;
 `;
 
 const ModalBg = styled.div`
@@ -88,4 +103,24 @@ const ModalBtnBox = styled.div`
   display: flex;
   justify-content: center;
   align-items: flex-start;
+`;
+const StButton = styled.button`
+  width: auto;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  font-size: 1.1rem;
+  padding: 3% 8%;
+  border: 0;
+  border-radius: 5px;
+  box-shadow: 0 0 5px 2px #fff;
+  margin-top: 0;
+  margin-left: 0;
+  margin-right: 5%;
+  font-weight: bold;
+  transition: 0.1s;
+  cursor: pointer;
+  &:hover {
+    background-color: #fff;
+    color: #000;
+  }
 `;

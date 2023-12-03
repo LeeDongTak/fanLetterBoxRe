@@ -1,21 +1,20 @@
-import React, { useContext } from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
+import { __getFanLetter } from "../../redux/modules/fanLetter";
 
 function DetailHeader() {
-  const insertFanLetter = useSelector((state) => state.insertFanLetter);
-  const { id } = useParams();
-  const fanLetterData = [...insertFanLetter.fanLetterData];
-  const resultData = fanLetterData.find((x) => x.id === id);
+  const fanLetter = useSelector((state) => state.fanLetter);
+  const [searchParams, setSearchParams] = useSearchParams();
   
   return (
     <Header>
       <ImgBox>
-        <Img src={resultData.avatar} alt="" />
+        <Img src={fanLetter.detailData.avatar} alt="" />
       </ImgBox>
-      <NickNameBox>{resultData.nickname}</NickNameBox>
-      <DateBox>{resultData.createdAt}</DateBox>
+      <NickNameBox>{fanLetter.detailData.nickname}</NickNameBox>
+      <DateBox>{fanLetter.detailData.createdAt}</DateBox>
     </Header>
   );
 }

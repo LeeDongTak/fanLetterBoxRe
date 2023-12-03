@@ -1,11 +1,24 @@
 import { createStore } from "redux";
 import { combineReducers } from "redux";
-import artistBtn from "../modules/homeRedux/artistBtn";
-import insertFanLetter from "../modules/homeRedux/insertFanLetter";
-import searchFanLetter from "../modules/homeRedux/searchFanLetter";
-import detail from "../modules/detailRedux/detail";
+import artistBtn from "../modules/artistBtn";
+import fanLetter from "../modules/fanLetter";
+import searchFanLetter from "../modules/searchFanLetter";
+import modal from "../modules/modal";
+import auth from "../modules/auth";
+import { configureStore } from "@reduxjs/toolkit";
 
-const rootReducer = combineReducers({ artistBtn, insertFanLetter,searchFanLetter, detail });
-const store = createStore(rootReducer);
+const store = configureStore({
+  reducer: {
+    artistBtn,
+    fanLetter,
+    searchFanLetter,
+    modal,
+    auth,
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
+});
 
 export default store;
