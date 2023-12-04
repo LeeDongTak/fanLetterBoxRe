@@ -14,7 +14,7 @@ function FanLetter({ fanLetterData }) {
       }}
     >
       <ImgBox>
-        <Img src={fanLetterData.avatar} alt="" />
+        <Img $imgAvatar={fanLetterData.avatar} alt="" />
       </ImgBox>
       <ContentBox>
         <TextContent>{fanLetterData.nickname}</TextContent>
@@ -51,9 +51,12 @@ const ImgBox = styled.div`
   align-items: center;
 `;
 
-const Img = styled.img`
-  width: 70%;
+const Img = styled.div`
+  width: 4.5rem;
+  height: 4.5rem;
   border-radius: 50%;
+  background-image: url(${({$imgAvatar})=>$imgAvatar});
+  background-size: cover;
 `;
 
 const ContentBox = styled.div`
