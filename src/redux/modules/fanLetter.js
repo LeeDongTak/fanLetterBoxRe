@@ -10,7 +10,7 @@ export const __getFanLetter = createAsyncThunk(
     try {
       const responce = await api.get("/fanLetter");
 
-      const detailData = responce.data.find((x) => x.id === payload);
+      const detailData = responce.data.find((x) => String(x.id) === payload);
       return thunkAPI.fulfillWithValue({ data: responce.data, detailData });
     } catch (error) {
       return thunkAPI.rejectWithValue(error);

@@ -17,7 +17,6 @@ function Detail() {
   useEffect(() => {
     dispatch(__getFanLetter(id))
   },[]);
-  
   return (
     <StWrap>
       {/* 모달창 */}

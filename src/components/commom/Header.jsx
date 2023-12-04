@@ -11,10 +11,12 @@ function Header() {
   const [logOutModal, setLogOutModal] = useState(false);
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
-    dispatch(__getUser({ navigate, accessToken: user.accessToken }));
+    if (localStorage.getItem("user") !== null) {
+      dispatch(__getUser({ navigate, accessToken: user?.accessToken }));
+    }
     const interval = setInterval(() => {
       if (localStorage.getItem("user") !== null) {
-        dispatch(__getUser({ navigate, accessToken: user.accessToken }));
+        dispatch(__getUser({ navigate, accessToken: user?.accessToken }));
       }
     }, 600000);
     setInterval(() => {
@@ -22,7 +24,6 @@ function Header() {
         clearInterval(interval);
       }
     }, 6000);
-    
   }, []);
   return (
     <>

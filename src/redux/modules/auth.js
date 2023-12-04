@@ -36,7 +36,7 @@ export const __signInUser = createAsyncThunk(
         id: payload.id,
         password: payload.pw,
       };
-      const res = await signUpApi.post(`/login?expiresIn=0.1m`, user);
+      const res = await signUpApi.post(`/login`, user);
       return thunkAPI.fulfillWithValue(res.data);
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);

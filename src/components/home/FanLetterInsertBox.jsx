@@ -23,7 +23,7 @@ function FanLetterInsertBox() {
     contentRef.current.focus();
     if (localStorage.getItem("user") !== null) {
       const user = JSON.parse(localStorage.getItem("user"));
-      setNickName(user.nickname);
+      setNickName(user?.nickname);
     }
   }, []);
 
