@@ -33,6 +33,7 @@ function Button({ Sortation, contentInput, setContentinput }) {
               __addFanLetter({
                 searchParams: searchParams.get("artistSort"),
                 contentInput,
+                navigate
               })
             );
             setContentinput('')
@@ -108,6 +109,7 @@ function Button({ Sortation, contentInput, setContentinput }) {
               __updateFanLetter({
                 id: fanLetter.detailData.id,
                 updContentInput: fanLetter.updContentInput,
+                navigate
               })
             );
             dispatch(modalShow({ modalMsg: "", updBtn: false }));
@@ -122,7 +124,7 @@ function Button({ Sortation, contentInput, setContentinput }) {
         <StButton
           $btnStyle="cmitBtn"
           onClick={() => {
-            dispatch(__deleteFanLetter(fanLetter.detailData.id));
+            dispatch(__deleteFanLetter({id:fanLetter.detailData.id,navigate}));
             dispatch(modalShow({ modalMsg: "", updBtn: false }));
             navigate("/");
           }}

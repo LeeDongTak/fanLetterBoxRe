@@ -48,6 +48,7 @@ function ProfileUpdateBox() {
       dispatch(__getUser({ navigate, accessToken: LSuser.accessToken }));
       setNickNameInput(LSuser.nickname);
       setUser(LSuser);
+      
     }
   }, []);
   return (

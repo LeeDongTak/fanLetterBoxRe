@@ -5,7 +5,6 @@ import styled from "styled-components";
 
 
 function FanLetter({ fanLetterData }) {
-  const dispathch = useDispatch();
   const navigate = useNavigate();
   return (
     <ListElement
@@ -27,6 +26,8 @@ const ListElement = styled.li`
   width: 90%;
   height: 25%;
   margin-top: 5%;
+  margin-left: auto;
+  margin-right: auto;
   border-radius: 5px;
   display: flex;
   box-shadow: 0 0 5px 2px #fff;

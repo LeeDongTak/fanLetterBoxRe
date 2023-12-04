@@ -7,9 +7,10 @@ function DetailBtnBox() {
   const fanLetter = useSelector((state) => state.fanLetter);
   const modal = useSelector((state) => state.modal);
   const user = JSON.parse(localStorage.getItem("user"));
+  console.log(fanLetter.detailData)
   return (
     <BtnBox>
-      {fanLetter.detailData.userId === user.userId ? (
+      {fanLetter.detailData.userId === user?.userId ? (
         modal.updContentShow === false ? (
           <>
             <Button Sortation="수정" />

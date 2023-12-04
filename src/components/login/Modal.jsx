@@ -27,7 +27,7 @@ function Modal({ setSignUpToggle }) {
         <ModalText>
           {auth.signUpsuccess === true || auth.signInsuccess === true
             ? auth.successMessage
-            : auth.error.message}
+            : auth.error}
         </ModalText>
 
         <ModalBtnBox>

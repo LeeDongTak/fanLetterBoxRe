@@ -13,6 +13,13 @@ export const __signUpUser = createAsyncThunk(
         password: payload.pw,
         nickname: payload.nickName,
       };
+      if (payload.id.length > 10) {
+        return thunkAPI.rejectWithValue({message:"id는 10글자 이하의 문자열이어야 합니다."});
+      }else if (payload.pw.length > 15) {
+        return thunkAPI.rejectWithValue({message:"password는 15글자 이하의 문자열이어야 합니다."});
+      }else if (payload.nickName.length > 10) {
+        return thunkAPI.rejectWithValue({message:"닉네임은 10글자 이하의 문자열이어야 합니다."});
+      }
       const res = await signUpApi.post(`/register`, user);
       return thunkAPI.fulfillWithValue(res.data);
     } catch (error) {
@@ -29,7 +36,7 @@ export const __signInUser = createAsyncThunk(
         id: payload.id,
         password: payload.pw,
       };
-      const res = await signUpApi.post(`/login`, user);
+      const res = await signUpApi.post(`/login?expiresIn=0.1m`, user);
       return thunkAPI.fulfillWithValue(res.data);
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -214,7 +221,7 @@ const auth = createSlice({
         localStorage.clear();
         action.payload.navigate("/login");
         state.user = {};
-        state.error = action.payload.error;
+        state.error = action.payload.error.message;
         state.isLoading = false;
         state.isSuccess = false;
         state.isError = true;

@@ -10,16 +10,19 @@ function Header() {
   const dispatch = useDispatch();
   const [logOutModal, setLogOutModal] = useState(false);
   useEffect(() => {
-    if (localStorage.getItem("user") !== null) {
-      const user = JSON.parse(localStorage.getItem("user"));
-      dispatch(__getUser({ navigate, accessToken: user.accessToken }));
-      const interval = setInterval(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    dispatch(__getUser({ navigate, accessToken: user.accessToken }));
+    const interval = setInterval(() => {
+      if (localStorage.getItem("user") !== null) {
         dispatch(__getUser({ navigate, accessToken: user.accessToken }));
-      }, 60000);
-      if (localStorage.getItem("user") === null) {
-        clearInterval(interval)
       }
-    }
+    }, 600000);
+    setInterval(() => {
+      if (localStorage.getItem("user") === null) {
+        clearInterval(interval);
+      }
+    }, 6000);
+    
   }, []);
   return (
     <>

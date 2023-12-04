@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import moment from "moment/moment";
 import api from "../../axios/api";
+import { __getUser } from "./auth";
 
 // 데이터 조회
 export const __getFanLetter = createAsyncThunk(
@@ -28,7 +29,7 @@ export const __addFanLetter = createAsyncThunk(
         avatar: user.avatar,
         content: payload.contentInput,
         writedTo: payload.searchParams,
-        userId: user.userId
+        userId: user.userId,
       };
       if (payload.contentInput.length === 0) {
         return thunkAPI.fulfillWithValue({
@@ -43,12 +44,22 @@ export const __addFanLetter = createAsyncThunk(
           errMsgShow: true,
         });
       } else {
-        const responce = await api.post("/fanLetter", fanLetter);
-        return thunkAPI.fulfillWithValue({
-          data: responce.data,
-          errMsg: "",
-          errMsgShow: false,
-        });
+        const getRes = await thunkAPI.dispatch(
+          __getUser({
+            navigate: payload.navigate,
+            accessToken: user.accessToken,
+          })
+        );
+        if (getRes.payload.status === 200) {
+          const responce = await api.post("/fanLetter", fanLetter);
+          return thunkAPI.fulfillWithValue({
+            data: responce.data,
+            errMsg: "",
+            errMsgShow: false,
+          });
+        } else {
+          return thunkAPI.rejectWithValue(getRes.payload.error);
+        }
       }
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
@@ -60,10 +71,21 @@ export const __updateFanLetter = createAsyncThunk(
   "updateFanLetter",
   async (payload, thunkAPI) => {
     try {
-      const responce = await api.patch(`/fanLetter/${payload.id}`, {
-        content: `${payload.updContentInput}`,
-      });
-      return thunkAPI.fulfillWithValue(responce.data);
+      const user = JSON.parse(localStorage.getItem("user"));
+      const getRes = await thunkAPI.dispatch(
+        __getUser({
+          navigate: payload.navigate,
+          accessToken: user.accessToken,
+        })
+      );
+      if (getRes.payload.status === 200) {
+        const responce = await api.patch(`/fanLetter/${payload.id}`, {
+          content: `${payload.updContentInput}`,
+        });
+        return thunkAPI.fulfillWithValue(responce.data);
+      } else {
+        return thunkAPI.rejectWithValue(getRes.payload.error);
+      }
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
@@ -74,16 +96,25 @@ export const __deleteFanLetter = createAsyncThunk(
   "deleteFanLetter",
   async (payload, thunkAPI) => {
     try {
-      const responce = await api.delete(`/fanLetter/${payload}`);
-      console.log(responce.data);
-      return thunkAPI.fulfillWithValue(payload);
+      const user = JSON.parse(localStorage.getItem("user"));
+      const getRes = await thunkAPI.dispatch(
+        __getUser({
+          navigate: payload.navigate,
+          accessToken: user.accessToken,
+        })
+      );
+      if (getRes.payload.status === 200) {
+        const responce = await api.delete(`/fanLetter/${payload.id}`);
+
+        return thunkAPI.fulfillWithValue(payload.id);
+      } else {
+        return thunkAPI.rejectWithValue(getRes.payload.error);
+      }
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
     }
   }
 );
-
-
 
 const initialState = {
   errMsg: "",
@@ -206,7 +237,6 @@ const fanLetter = createSlice({
       .addCase(__updateFanLetter.pending, (state, action) => {
         state.isUpdateLoading = true;
         state.isUpdateError = false;
-        
       })
       // fanLetterData수정하기 성공
       .addCase(__updateFanLetter.fulfilled, (state, action) => {
@@ -218,10 +248,11 @@ const fanLetter = createSlice({
         state.detailData = { ...action.payload };
         state.isUpdateLoading = false;
         state.isUpdateError = false;
-        
       })
       // fanLetterData수정하기 실패
       .addCase(__updateFanLetter.rejected, (state, action) => {
+        console.log(state.detailData)
+        state.detailData = state.detailData;
         state.isUpdateLoading = false;
         state.isUpdateError = true;
         state.updateError = action.payload;

@@ -12,7 +12,7 @@ function Modal({ setSignUpToggle }) {
 
   useEffect(() => {
     BtnRef.current.focus();
-  });
+  },[]);
   return (
     <ModalWrap>
       <ModalBg
@@ -22,7 +22,7 @@ function Modal({ setSignUpToggle }) {
       ></ModalBg>
       <ModalBox>
         <ModalText>
-          {auth.isError === true ? auth.error : auth.successMessage}
+          {auth.isError === true ? auth.error : auth?.successMessage}
         </ModalText>
 
         <ModalBtnBox>
